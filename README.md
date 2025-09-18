@@ -1,5 +1,5 @@
-# 학원의 신 Server
-학원의 신 Server Repository입니다.
+# KNU-GPT FrontEnd
+KNU-GPT FrontEnd Repository 입니다.
 
 # GitHub Role
 해당 Repository는 다음과 같은 규칙을 따르고 있습니다.
