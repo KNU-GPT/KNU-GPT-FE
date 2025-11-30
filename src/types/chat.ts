@@ -42,30 +42,35 @@ export interface Pageable {
 }
 
 /**
+ * 채팅 상세 내용 인터페이스
+ */
+export interface ChatDetail {
+  user_id: string | number;
+  question: string;
+  answer: string;
+}
+
+/**
+ * 채팅 내역 아이템 인터페이스 (API 응답)
+ */
+export interface ChatHistoryItem {
+  type: string;
+  created_at: string;
+  chat: ChatDetail;
+}
+
+/**
  * 채팅 내역 페이징 응답 구조
  * [회원] 채팅방 채팅내역 조회 API 응답 구조
  */
 export interface ChatHistoryResponse {
-  /** 채팅 메시지 배열 (최신 순) */
-  content: ChatMessage[];
-  /** 페이징 정보 */
-  pageable: Pageable;
-  /** 전체 요소 개수 */
-  totalElements: number;
-  /** 전체 페이지 수 */
-  totalPages: number;
-  /** 마지막 페이지 여부 */
-  last: boolean;
-  /** 첫 페이지 여부 */
-  first: boolean;
-  /** 현재 페이지 크기 */
-  size: number;
-  /** 현재 페이지 번호 */
-  number: number;
-  /** 현재 페이지의 요소 개수 */
-  numberOfElements: number;
-  /** 빈 페이지 여부 */
-  empty: boolean;
+  page_info: {
+    total_page: number;
+    current_page: number;
+    total_cnt: number;
+    current_cnt: number;
+  };
+  chats: ChatHistoryItem[];
 }
 
 /**

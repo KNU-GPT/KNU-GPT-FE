@@ -1,6 +1,6 @@
 // src/api/chatApi.ts
 import apiClient from './client';
-import type { ChatRoom, ChatMessage } from '../types/chat';
+import type { ChatRoom, ChatMessage, ChatHistoryResponse } from '../types/chat';
 
 // API 응답 타입 정의
 interface ApiResponse<T> {
@@ -49,7 +49,7 @@ export const sendMessage = async (chatRoomId: number, message: string) => {
 // GET /api/v1/chat-rooms/{chatRoomId}/chats
 // =================================================================
 export const getChatHistory = async (chatRoomId: number, page = 1, size = 20) => {
-  const response = await apiClient.get<ApiResponse<{ chats: ChatMessage[] }>>(`/chat-rooms/${chatRoomId}/chats`, {
+  const response = await apiClient.get<ApiResponse<ChatHistoryResponse>>(`/chat-rooms/${chatRoomId}/chats`, {
     params: { page, size }
   });
   return response.data;

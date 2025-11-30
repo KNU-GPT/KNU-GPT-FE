@@ -360,12 +360,64 @@ export default function Chat() {
     try {
       setIsLoadingMessages(true);
       const response = await getChatHistory(toNumber(chatRoomId), 0, 100); // 최신 100개 메시지
-      // 최신 메시지가 아래에 오도록 정렬 (createdAt 기준 오름차순)
-      const sortedMessages = [...(response.data?.chats || [])].sort((a, b) => {
+      
+      // API 응답 구조 변경에 따른 처리
+      // response.data는 ChatHistoryResponse 타입 (chats 배열 포함)
+      const historyData = response.data;
+      
+      if (!historyData || !historyData.chats) {
+        setCurrentMessages([]);
+        return;
+      }
+
+      const newMessages: ChatMessage[] = [];
+      
+      // chats 배열을 순회하며 User 질문과 Bot 답변을 분리하여 메시지로 변환
+      // API가 과거 -> 최신 순으로 준다고 가정하고 순서대로 추가
+      
+      historyData.chats.forEach((item, index) => {
+        // item.chat 안에 실제 대화 내용이 있음 (chat.chat 구조 대응)
+        // 만약 item.chat.chat 구조라면 item.chat.chat으로 접근해야 함
+        // 현재 타입 정의는 item.chat에 user_id, question, answer가 있다고 가정함
+        // 사용자 제공 JSON: "chat" : { chat : { ... } } 이지만
+        // 타입 정의에서 item.chat을 ChatDetail로 정의했으므로 item.chat.question으로 접근
+        // 만약 실제 런타임 데이터가 item.chat.chat이라면 여기서 수정 필요
+        // 일단 item.chat을 바로 사용
+        
+        const detail = item.chat as any; // 유연하게 처리하기 위해 any 사용 고려, 일단은 타입대로
+        // 만약 detail.chat이 존재하면 한 단계 더 들어감
+        const realDetail = detail.chat ? detail.chat : detail;
+
+        const messageTime = item.created_at ? new Date(item.created_at).getTime() : new Date().getTime();
+        
+        // 1. 사용자 질문
+        if (realDetail.question) {
+          newMessages.push({
+            id: `history-${realDetail.user_id}-${index}-q`,
+            type: 'USER',
+            content: realDetail.question,
+            createdAt: new Date(messageTime).toISOString()
+          });
+        }
+        
+        // 2. 봇 답변
+        if (realDetail.answer) {
+          newMessages.push({
+            id: `history-${realDetail.user_id}-${index}-a`,
+            type: 'CHAT_BOT',
+            content: realDetail.answer,
+            createdAt: new Date(messageTime + 1000).toISOString() // 1초 뒤 답변 온 것으로 처리
+          });
+        }
+      });
+
+      // 날짜순 정렬
+      const sortedMessages = newMessages.sort((a, b) => {
         const dateA = new Date(a.createdAt).getTime();
         const dateB = new Date(b.createdAt).getTime();
         return dateA - dateB;
       });
+      
       setCurrentMessages(sortedMessages);
     } catch (error) {
       console.error('Failed to load chat history:', error);
@@ -828,7 +880,7 @@ export default function Chat() {
 
         {/* Chat Area */}
         <div ref={chatAreaRef} className="flex-1 overflow-y-auto p-6 space-y-6">
-        {!activeChatId || currentMessages.length === 0 ? (
+        {!activeChatId ? (
             <div className="space-y-[54px] max-w-[840px] mx-auto">
               <div className="flex flex-col gap-[6px] items-start">
                 <h1 className="font-Pretendard font-semibold text-[#222222] text-[32px] tracking-[-0.8px] w-full">안녕하세요, KNU GPT 입니다!</h1>
