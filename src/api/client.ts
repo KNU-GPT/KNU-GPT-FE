@@ -1,9 +1,12 @@
 // src/api/client.ts
 import axios from 'axios';
 
+// 환경 변수에서 API 주소 가져오기 (없으면 기본값 사용)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.knugpt.click';
+
 // 1. 기본 주소 설정
 const apiClient = axios.create({
-  baseURL: 'https://api.knugpt.click/api/v1', 
+  baseURL: `${API_BASE_URL}/api/v1`, 
   headers: {
     'Content-Type': 'application/json',
   },

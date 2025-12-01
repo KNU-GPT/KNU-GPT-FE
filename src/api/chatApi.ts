@@ -1,6 +1,6 @@
 // src/api/chatApi.ts
 import apiClient from './client';
-import type { ChatRoom, ChatMessage, ChatHistoryResponse } from '../types/chat';
+import type { ChatRoom, ChatHistoryResponse } from '../types/chat';
 
 // API 응답 타입 정의
 interface ApiResponse<T> {
