@@ -419,10 +419,10 @@ export default function GuestPage() {
   }, [guestConversationCount]);
 
   const suggestedQuestions = [
-    "우리 학과의 졸업 요건이 궁금해요.",
-    "우리 학과의 졸업 요건이 궁금해요.",
-    "우리 학과의 졸업 요건이 궁금해요.",
-    "우리 학과의 졸업 요건이 궁금해요.",
+    "내가 받을 수 있는 장학금이 있어?",
+    "다음 학기 개강은 언제야",
+    "이번 학기 수강 신청 기간은 언제야?",
+    "휴학 신청은 어떻게 해?",
   ];
 
   const handleSendMessage = async (messageText?: string) => {
